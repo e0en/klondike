@@ -41,6 +41,9 @@ class Foundation(CardStack):
     def __init__(self):
         CardStack.__init__(self)
 
+    def empty(self):
+        return not bool(self.open_cards)
+
     def __repr__(self):
         result = 'Foundation('
         if self.open_cards:
@@ -54,6 +57,9 @@ class Foundation(CardStack):
 class Tableau(CardStack):
     def __init__(self):
         CardStack.__init__(self)
+
+    def empty(self):
+        return not bool(self.open_cards + self.closed_cards)
 
     def __repr__(self):
         result = 'Tableau('
