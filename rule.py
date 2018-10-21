@@ -10,7 +10,8 @@ def possible_from_locations(board: Board):
         result += [('talon', )]
 
     for i, f in enumerate(board.foundation):
-        if not f.empty():
+        # no need to move a king card from foundation
+        if not f.empty() and f.open_cards[-1].rank != Rank.KING:
             result += [('foundation', i)]
 
     for i, t in enumerate(board.tableau):
@@ -35,27 +36,33 @@ def possible_to_locations(from_location, board: Board):
         tableau = board.tableau[from_location[1]]
         moving_cards = tableau.open_cards[from_location[2]:]
 
-    if len(moving_cards) == 1:
+    if len(moving_cards) == 1 and from_location[0] != 'foundation':
         card = moving_cards[0]
         for i, f in enumerate(board.foundation):
             if f.empty():
                 if card.rank == Rank.ACE:
                     result += [('foundation', i)]
+                    break
                 continue
 
             f_card = f.open_cards[-1]
             if (f_card.symbol == card.symbol and
                 card.rank.value == f_card.rank.value + 1):
                 result += [('foundation', i)]
+                break
 
     for i, t in enumerate(board.tableau):
-        if from_location[0] == 'tablaeu' and from_location[1] == i:
+        if from_location[0] == 'tableau' and from_location[1] == i:
             continue
 
         card = moving_cards[0]
 
-        if t.empty() and card.rank == Rank.KING:
-            result += [('tablaeu', i)]
+        if t.empty():
+            if card.rank == Rank.KING:
+                if (from_location[0] == 'tableau' and
+                    not board.tableau[from_location[1]].closed_cards):
+                    continue
+                result += [('tableau', i)]
             continue
 
         t_card = t.open_cards[-1]
@@ -63,7 +70,7 @@ def possible_to_locations(from_location, board: Board):
             continue
         if (card.color != t_card.color and
             card.rank.value == (t_card.rank.value - 1)):
-            result += [('tablaeu', i)]
+            result += [('tableau', i)]
 
     return result
 
