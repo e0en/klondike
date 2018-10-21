@@ -92,11 +92,11 @@ class Board:
         print('-' * 20)
         print(self.talon)
         print('')
-        for f in self.foundation:
-            print(f)
+        for i, f in enumerate(self.foundation):
+            print(i, f)
         print('')
-        for t in self.tableau:
-            print(t)
+        for i, t in enumerate(self.tableau):
+            print(i, t)
         print('-' * 20)
 
 
