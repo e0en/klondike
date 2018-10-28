@@ -93,7 +93,8 @@ class Board:
         self.foundation = [Foundation() for _ in range(4)]
         self.tableau = [Tableau() for _ in range(7)]
 
-        deck = [Card(s, r) for s in Symbol for r in Rank]
+        deck = [Card(s, r) for s in Symbol for r in Rank
+                if s != Symbol.UNKNOWN and r != Rank.UNKNOWN]
         random.shuffle(deck)
         for i, t in enumerate(self.tableau):
             for _ in range(i):
