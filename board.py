@@ -11,6 +11,11 @@ class CardStackName(Enum):
     FOUNDATION = 2
     TABLEAU = 3
 
+    def __repr__(self):
+        return self.name
+
+    __str__ = __repr__
+
 
 class CardStack:
     name: CardStackName
