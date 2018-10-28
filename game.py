@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import json
+
 import rule
 from board import Board
 from board import CardStackName as csn
-from serialize import board_to_dict
+from serialize import board_to_dict, dict_to_move
 
 
 def apply_move(move, board: Board):
@@ -41,15 +43,43 @@ def apply_move(move, board: Board):
         board.tableau[to_pos[1]].open_cards += moving_cards
 
 
-if __name__ == '__main__':
-    board = Board()
-    while not rule.is_finished(board):
-        moves = rule.possible_moves(board)
-        if not moves:
-            print('game over')
-            break
+class Server:
+    def __init__(self):
+        self.board: Board = Board()
 
-        print(board_to_dict(board))
+    def send_board(self):
+        return json.dumps(board_to_dict(self.board))
+
+    def recv_move(self, move_json):
+        move = dict_to_move(json.loads(move_json))
+        if move not in rule.possible_moves(self.board):
+            return {'status': 'fail'}
+
+        apply_move(move, self.board)
+
+        if rule.is_finished(self.board):
+            return {'status': 'win'}
+        else:
+            return {'status': 'ok'}
+
+
+if __name__ == '__main__':
+    from serialize import move_to_dict, dict_to_board
+
+    server = Server()
+    is_finished = False
+
+    while not is_finished:
+        board_json = server.send_board()
+        board = dict_to_board(json.loads(board_json))
+
+        print('talon: ' + str(board.talon.open_cards))
+        for i, f in enumerate(board.foundation):
+            print(f'foundation {i+1}: ' + str(f.open_cards))
+        for i, t in enumerate(board.tableau):
+            print(f'tableau {i+1}: ' + str(t.open_cards))
+
+        moves = rule.possible_moves(board)
 
         for i, m in enumerate(moves):
             print(f'{i + 1}: {m}')
@@ -68,4 +98,8 @@ if __name__ == '__main__':
             continue
 
         move = moves[move_idx]
-        apply_move(move, board)
+        move_json = json.dumps(move_to_dict(move))
+        print(move_json)
+
+        msg = server.recv_move(move_json)
+        print(msg)
