@@ -1,23 +1,24 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from board import Board
+from board import CardStackName as csn
 from card import Rank
 
 
 def possible_from_locations(board: Board):
     result = []
     if board.talon.open_cards:
-        result += [('talon', )]
+        result += [(csn.TALON, )]
 
     for i, f in enumerate(board.foundation):
         # no need to move a king card from foundation
         if not f.empty() and f.open_cards[-1].rank != Rank.KING:
-            result += [('foundation', i)]
+            result += [(csn.FOUNDATION, i)]
 
     for i, t in enumerate(board.tableau):
         if not t.empty():
             for j in range(len(t.open_cards)):
-                result += [('tableau', i, j)]
+                result += [(csn.TABLEAU, i, j)]
 
     return result
 
@@ -25,44 +26,44 @@ def possible_from_locations(board: Board):
 def possible_to_locations(from_location, board: Board):
     result = []
 
-    if from_location[0] == 'talon':
+    if from_location[0] == csn.TALON:
         moving_cards = [board.talon.open_cards[-1]]
 
-    elif from_location[0] == 'foundation':
+    elif from_location[0] == csn.FOUNDATION:
         foundation = board.foundation[from_location[1]]
         moving_cards = [foundation.open_cards[-1]]
 
-    elif from_location[0] == 'tableau':
+    elif from_location[0] == csn.TABLEAU:
         tableau = board.tableau[from_location[1]]
         moving_cards = tableau.open_cards[from_location[2]:]
 
-    if len(moving_cards) == 1 and from_location[0] != 'foundation':
+    if len(moving_cards) == 1 and from_location[0] != csn.FOUNDATION:
         card = moving_cards[0]
         for i, f in enumerate(board.foundation):
             if f.empty():
                 if card.rank == Rank.ACE:
-                    result += [('foundation', i)]
+                    result += [(csn.FOUNDATION, i)]
                     break
                 continue
 
             f_card = f.open_cards[-1]
             if (f_card.symbol == card.symbol and
                 card.rank.value == f_card.rank.value + 1):
-                result += [('foundation', i)]
+                result += [(csn.FOUNDATION, i)]
                 break
 
     for i, t in enumerate(board.tableau):
-        if from_location[0] == 'tableau' and from_location[1] == i:
+        if from_location[0] == csn.TABLEAU and from_location[1] == i:
             continue
 
         card = moving_cards[0]
 
         if t.empty():
             if card.rank == Rank.KING:
-                if (from_location[0] == 'tableau' and
+                if (from_location[0] == csn.TABLEAU and
                     not board.tableau[from_location[1]].closed_cards):
                     continue
-                result += [('tableau', i)]
+                result += [(csn.TABLEAU, i)]
             continue
 
         t_card = t.open_cards[-1]
@@ -70,7 +71,7 @@ def possible_to_locations(from_location, board: Board):
             continue
         if (card.color != t_card.color and
             card.rank.value == (t_card.rank.value - 1)):
-            result += [('tableau', i)]
+            result += [(csn.TABLEAU, i)]
 
     return result
 

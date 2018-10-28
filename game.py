@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import rule
 from board import Board
+from board import CardStackName as csn
 
 
 def apply_move(move, board: Board):
@@ -16,14 +17,14 @@ def apply_move(move, board: Board):
 
     from_pos, to_pos = move
 
-    if from_pos[0] == 'talon':
+    if from_pos[0] == csn.TALON:
         card = board.talon.open_cards.pop()
         moving_cards = [card]
-    elif from_pos[0] == 'foundation':
+    elif from_pos[0] == csn.FOUNDATION:
         f = board.foundation[from_pos[1]]
         card = f.open_cards.pop()
         moving_cards = [card]
-    elif from_pos[0] == 'tableau':
+    elif from_pos[0] == csn.TABLEAU:
         t = board.tableau[from_pos[1]]
         moving_cards = t.open_cards[from_pos[2]:]
         t.open_cards = t.open_cards[:from_pos[2]]
@@ -31,11 +32,11 @@ def apply_move(move, board: Board):
             new_open_card = t.closed_cards.pop()
             t.open_cards = [new_open_card]
 
-    if to_pos[0] == 'talon':
+    if to_pos[0] == csn.TALON:
         board.talon.open_cards += moving_cards
-    elif to_pos[0] == 'foundation':
+    elif to_pos[0] == csn.FOUNDATION:
         board.foundation[to_pos[1]].open_cards += moving_cards
-    elif to_pos[0] == 'tableau':
+    elif to_pos[0] == csn.TABLEAU:
         board.tableau[to_pos[1]].open_cards += moving_cards
 
 

@@ -1,17 +1,28 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from enum import Enum
 import random
 
 from card import Card, Symbol, Rank
 
 
+class CardStackName(Enum):
+    TALON = 1
+    FOUNDATION = 2
+    TABLEAU = 3
+
+
 class CardStack:
+    name: CardStackName
+
     def __init__(self):
         self.open_cards: list[Card] = []
-        self.closed_cards: list[Card]  = []
+        self.closed_cards: list[Card] = []
 
 
 class Talon(CardStack):
+    name = CardStackName.TALON
+
     def __init__(self):
         CardStack.__init__(self)
 
@@ -38,6 +49,8 @@ class Talon(CardStack):
 
 
 class Foundation(CardStack):
+    name = CardStackName.FOUNDATION
+
     def __init__(self):
         CardStack.__init__(self)
 
@@ -55,6 +68,8 @@ class Foundation(CardStack):
 
 
 class Tableau(CardStack):
+    name = CardStackName.TABLEAU
+
     def __init__(self):
         CardStack.__init__(self)
 
