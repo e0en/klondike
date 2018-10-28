@@ -3,6 +3,7 @@
 import rule
 from board import Board
 from board import CardStackName as csn
+from serialize import board_to_dict
 
 
 def apply_move(move, board: Board):
@@ -48,7 +49,7 @@ if __name__ == '__main__':
             print('game over')
             break
 
-        board.display()
+        print(board_to_dict(board))
 
         for i, m in enumerate(moves):
             print(f'{i + 1}: {m}')

@@ -102,22 +102,3 @@ class Board:
 
         while deck:
             self.talon.closed_cards += [deck.pop()]
-
-    def display(self):
-        print('-' * 20)
-        print(self.talon)
-        print('')
-        for i, f in enumerate(self.foundation):
-            print(i, f)
-        print('')
-        for i, t in enumerate(self.tableau):
-            print(i, t)
-        print('-' * 20)
-
-
-if __name__ == '__main__':
-    board = Board()
-
-    board.display()
-    board.talon.draw()
-    board.display()
